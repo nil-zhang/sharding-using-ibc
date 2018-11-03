@@ -22,6 +22,7 @@ IBCPacketTx 负责传递跨链转移代币的交易信息，具体的交易信�
 
 这里 Hub 需要 知道 Zone1 当前所有有效 validators 的公钥，因为每一个区块头都包含由超过 2/3 的 validators 的私钥签名。
 
+![images](https://github.com/nil-zhang/sharding-using-ibc/blob/master/images/IBC-tx.png)
 
 ## 跨链消息传递
 不同的 Zone 之间虽然设计为通过 Hub 来完成跨链交易，但消息在 Zone 和 Hub 之间传递还需要引入 Relay 程序，Relay 程序负责从原链生成 Merkle Proof 并组装成 Packet，然后将 Packet 发送到目标链。具体流程如下图所示。
@@ -37,3 +38,6 @@ IBCPacketTx 负责传递跨链转移代币的交易信息，具体的交易信�
 5、Hub 和 Zone B 的 Relay 程序同样在监控 面向 Zone B 的消息队列，对入队的消息构造对应的 Merkle Proof 并发送给 Zone B。
 
 处理结果会以收据的形式沿发送交易相反的路径发送到 Zone A 里面。
+
+![images](https://github.com/nil-zhang/sharding-using-ibc/blob/master/images/IBC-relay.png)
+
