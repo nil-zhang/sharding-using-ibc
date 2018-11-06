@@ -41,3 +41,60 @@ IBCPacketTx 负责传递跨链转移代币的交易信息，具体的交易信�
 
 ![images](https://github.com/nil-zhang/sharding-using-ibc/blob/master/images/IBC-relay.png)
 
+## 跨链 Testnet
+
+### first chain chain-id=nil-000
+
+    $ basecli keys list
+    NAME:	TYPE:	ADDRESS:	PUBKEY:
+    bob	local	cosmos1wlcwzxrtf3lqhf467rhq6wvdt6kml0gj25n07m cosmospub1addwnpepqd2js35a9hqlgchmh3rcrnhv6fxxdt793q5gasugtxtaprq6dpf5kgrssn5
+
+### second chain chain-id=nil-007
+
+    $ multicli keys list
+    NAME:	TYPE:	ADDRESS:	PUBKEY:
+    alice	local	cosmosaccaddr1phfu4gtug87easwj7g4pzlzc65jh8kx69kh4qt cosmosaccpub1addwnpepq25l30e9wyp67l8v8mh7lmejpeurnjmu5fhrza8t4utsh9z5dz3zxqx5wq2
+    hub	local	cosmosaccaddr1ewxzqlesp425l2ege9e79slnnry65tg2g603ku cosmosaccpub1addwnpepqva5sawzp75h0t0syqqq0309txv7u9x48pgag4vgt5zqywqe04kr62z30ww
+
+### start the relay
+
+    $ multicli relay --from=hub --chain-id=nil-007 --from-chain-id=nil-000 --from-chain-node localhost:26667 --to-chain-id=nil-007 --to-chain-node localhost:26657 --home ~/.multicli/ --account-number=1
+
+### transfer mycoins of bob(chain1) to alice(chain2)
+
+    $ basecli transfer --from=bob --to cosmosaccaddr1phfu4gtug87easwj7g4pzlzc65jh8kx69kh4qt --amount=992mycoin --chain=nil-007 --chain-id=nil-000 --node http://localhost:26667
+
+### after several tests, query alice account
+
+    $ multicli account cosmosaccaddr1phfu4gtug87easwj7g4pzlzc65jh8kx69kh4qt
+    {
+    "type": "multicoin/Account",
+    "value": {
+    "BaseAccount": {
+    "address": "cosmosaccaddr1phfu4gtug87easwj7g4pzlzc65jh8kx69kh4qt",
+    "coins": [
+    {
+    "denom": "aliceToken",
+    "amount": "950"
+    },
+    {
+    "denom": "mycoin",
+    "amount": "9920"
+    },
+    {
+    "denom": "steak",
+    "amount": "50"
+    }
+    ],
+    "public_key": {
+    "type": "tendermint/PubKeySecp256k1",
+    "value": "Aqn4vyVxA6987D7v7+8yDng5y3yibjF0668XC5RUaKIj"
+    },
+    "account_number": "0",
+    "sequence": "1"
+    },
+    "name": ""
+    }
+    }
+
+BTW: multicli and multicoind is my own chain based cosmos-sdk, forked from basecoind and add stake and gov module. You can use gaiacli and gaiad instead.
